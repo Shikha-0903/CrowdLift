@@ -1,0 +1,2 @@
+C:/shikha/projects/crowdlift/android/app/.cxx/RelWithDebInfo/625o734r/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/shikha/projects/crowdlift/android/app/.cxx/RelWithDebInfo/625o734r/arm64-v8a/CMakeFiles/rebuild_cache.dir

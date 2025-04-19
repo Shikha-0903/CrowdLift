@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "998264731262",
+    "project_id": "artgallery-1e47c",
+    "storage_bucket": "artgallery-1e47c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998264731262:android:20ab835f57da2add838a2f",
+        "android_client_info": {
+          "package_name": "com.example.crowdlift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "998264731262-o99m1ons8hs10ncc2hknmrois6n85hmh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.crowdlift",
+            "certificate_hash": "2f7f6b7a5d222ac45b2e9364677dbf610d95a069"
+          }
+        },
+        {
+          "client_id": "998264731262-pa6vls0qf8h5uo0iggkj5ne4m42j2tmo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk7ucXoMHtjuqtzZM6sM9Nwk5W7Itm8SA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "998264731262-pa6vls0qf8h5uo0iggkj5ne4m42j2tmo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998264731262:android:ee7ca055863d8777838a2f",
+        "android_client_info": {
+          "package_name": "com.example.sycs_proj_shikha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "998264731262-pa6vls0qf8h5uo0iggkj5ne4m42j2tmo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk7ucXoMHtjuqtzZM6sM9Nwk5W7Itm8SA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "998264731262-pa6vls0qf8h5uo0iggkj5ne4m42j2tmo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

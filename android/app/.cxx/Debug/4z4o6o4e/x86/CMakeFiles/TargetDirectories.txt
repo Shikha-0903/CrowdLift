@@ -1,0 +1,2 @@
+C:/shikha/projects/crowdlift/android/app/.cxx/Debug/4z4o6o4e/x86/CMakeFiles/edit_cache.dir
+C:/shikha/projects/crowdlift/android/app/.cxx/Debug/4z4o6o4e/x86/CMakeFiles/rebuild_cache.dir
