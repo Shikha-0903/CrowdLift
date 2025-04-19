@@ -53,35 +53,39 @@ CrowdLift focuses on building **trust** and **transparency** through:
 
 ## 📸 App Screenshots
 
-| Splash Screen |
-|---------------|
-| ![Splash](screenshots/splash.jpeg) |
+### 🔹 Splash & Onboarding
 
-| Onboarding 1 | Onboarding 2 | Onboarding 3 |
-|--------------|--------------|--------------|
-| ![Onboarding 1](screenshots/on1.jpeg) | ![Onboarding 2](screenshots/on2.jpeg) | ![Onboarding 3](screenshots/on3.jpeg) |
+| Splash | Onboarding 1 | Onboarding 2 |
+|--------|--------------|--------------|
+| ![Splash](screenshots/splash.jpeg) | ![Onboarding 1](screenshots/on1.jpeg) | ![Onboarding 2](screenshots/on2.jpeg) |
 
-| Register | Login |
-|----------|-------|
-| ![Register](screenshots/register.jpeg) | ![Login](screenshots/login.jpeg) |
+| Onboarding 3 | Register | Login |
+|--------------|----------|-------|
+| ![Onboarding 3](screenshots/on3.jpeg) | ![Register](screenshots/register.jpeg) | ![Login](screenshots/login.jpeg) |
 
-| Home | Seek | Invest |
-|------|------|--------|
+---
+
+### 🔹 Core Navigation
+
+| Home | Seeker | Investor |
+|------|--------|----------|
 | ![Home](screenshots/home.jpeg) | ![Seek](screenshots/seek.jpeg) | ![Invest](screenshots/invest.jpeg) |
 
 | User Profile | Chat | Payment |
 |--------------|------|---------|
 | ![User Profile](screenshots/user_pro.jpeg) | ![Chat](screenshots/chat.jpeg) | ![Payment](screenshots/payment.jpeg) |
 
+---
+
+### 🔹 Other Screens
+
 | Agreement | Transaction History | About |
 |-----------|----------------------|-------|
 | ![Agreement](screenshots/agreement.jpeg) | ![Transaction History](screenshots/transaction.jpeg) | ![About](screenshots/about.jpeg) |
 
-| Drawer | User Info |
-|--------|-----------|
-| ![Drawer](screenshots/draw.jpeg) | ![User Info](screenshots/user.jpeg) |
-
----
+| Drawer | User Info | — |
+|--------|-----------|----|
+| ![Drawer](screenshots/draw.jpeg) | ![User Info](screenshots/user.jpeg) |  |
 
 ## ⚙️ Tech Stack
 
