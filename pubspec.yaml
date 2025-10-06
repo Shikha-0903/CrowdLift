@@ -30,7 +30,6 @@ dependencies:
   flutter_launcher_icons: 0.14.2
 
   flutter_local_notifications: ^19.0.0
-  flutter_stripe: ^11.4.0
   flutter_tts: ^4.2.2
   fluttertoast: ^8.2.12
   google_fonts: ^6.2.1

@@ -64,7 +64,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   SizedBox(height: 20,),
                   ElevatedButton(
                     onPressed: sendPasswordResetEmail,
-                    child: Text("Send password"),
+                    child: Text("Send Password"),
                   ),
                 ],
               ),
