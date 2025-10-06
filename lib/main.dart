@@ -1,13 +1,14 @@
-import 'package:crowdlift/home_screen.dart';
-import 'package:crowdlift/on_board.dart';
-import 'package:crowdlift/splash_screen.dart';
+import 'package:crowdlift/src/feature/home/presentation/pages/home_screen.dart';
+import 'package:crowdlift/src/feature/auth/presentation/widgets/on_board.dart';
+import 'package:crowdlift/src/feature/auth/presentation/widgets/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'utils/notification.dart';
-import 'chat/chat_screen.dart';
+import 'src/core/utils/notification.dart';
+import 'src/feature/chat/presentation/pages/chat_screen.dart';
+
 // Create a global navigator key for navigation from outside of context
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -114,7 +115,8 @@ class AuthStateHandler extends StatelessWidget {
         } else if (snapshot.hasData) {
           return SplashScreen(nextScreen: HomeScreen()); // User is logged in
         } else {
-          return SplashScreen(nextScreen: OnboardingScreen()); // User is not logged in
+          return SplashScreen(
+              nextScreen: OnboardingScreen()); // User is not logged in
         }
       },
     );
