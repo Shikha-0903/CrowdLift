@@ -10,7 +10,7 @@ class ReusableTextField extends StatefulWidget {
   final bool readOnly;
 
   const ReusableTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     this.prefixIcon, // Now optional
@@ -18,13 +18,13 @@ class ReusableTextField extends StatefulWidget {
     this.validator,
     this.isPassword = false,
     this.readOnly = false,
-  }) : super(key: key);
+  });
 
   @override
-  _ReusableTextFieldState createState() => _ReusableTextFieldState();
+  ReusableTextFieldState createState() => ReusableTextFieldState();
 }
 
-class _ReusableTextFieldState extends State<ReusableTextField> {
+class ReusableTextFieldState extends State<ReusableTextField> {
   bool _obscureText = true;
 
   @override

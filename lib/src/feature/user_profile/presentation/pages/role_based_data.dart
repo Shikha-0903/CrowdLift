@@ -5,7 +5,7 @@ import 'package:crowdlift/src/core/utils/search_users.dart';
 
 class FindData extends StatefulWidget {
   final String query;
-  const FindData({Key? key, required this.query});
+  const FindData({super.key, required this.query});
 
   @override
   State<FindData> createState() => _FindDataState();
@@ -28,16 +28,16 @@ class _FindDataState extends State<FindData> {
     });
 
     try {
-      print("Starting search for: '$query'");
+      debugPrint("Starting search for: '$query'");
 
       // Use the service to perform the search
       final results = await _searchService.searchUsers(query);
 
-      print("Search complete. Found ${results.length} results");
+      debugPrint("Search complete. Found ${results.length} results");
 
       // Debug: Print the first few results if any
       if (results.isNotEmpty) {
-        print("First result: ${results[0]}");
+        debugPrint("First result: ${results[0]}");
       }
 
       setState(() {
@@ -45,7 +45,7 @@ class _FindDataState extends State<FindData> {
         isSearching = false;
       });
     } catch (e) {
-      print("Search error: $e");
+      debugPrint("Search error: $e");
       setState(() {
         isSearching = false;
       });
@@ -140,12 +140,12 @@ class _FindDataState extends State<FindData> {
                                               email: user['email'],
                                               phone: user['phone'],
                                               role: user['role'],
-                                              capacity_about:
+                                              capacityAbout:
                                                   user['capacity_about'],
-                                              interest_expect:
+                                              interestExpect:
                                                   user['interest_expect'],
                                               description: user['description'],
-                                              profile_image:
+                                              profileImage:
                                                   user['profile_image'],
                                               aim: user["aim"],
                                             )),

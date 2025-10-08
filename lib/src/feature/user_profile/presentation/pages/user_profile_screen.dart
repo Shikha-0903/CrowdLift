@@ -12,9 +12,9 @@ class UserProfileScreen extends StatelessWidget {
   final String userId;
   final String email;
   final String description;
-  final String profile_image;
-  final String interest_expect;
-  final String capacity_about;
+  final String profileImage;
+  final String interestExpect;
+  final String capacityAbout;
   final String aim;
 
   const UserProfileScreen({
@@ -25,9 +25,9 @@ class UserProfileScreen extends StatelessWidget {
     required this.userId,
     required this.email,
     required this.description,
-    required this.interest_expect,
-    required this.capacity_about,
-    required this.profile_image,
+    required this.interestExpect,
+    required this.capacityAbout,
+    required this.profileImage,
     required this.aim,
   });
 
@@ -145,10 +145,10 @@ class UserProfileScreen extends StatelessWidget {
             _buildInfoCard("📜 Description", description),
             _buildInfoCard(
                 role == "Investor" ? "💰 Capacity" : "🏢 About Business",
-                capacity_about),
+                capacityAbout),
             _buildInfoCard(
                 role == "Investor" ? "📌 Interest" : "🎯 Expectation",
-                interest_expect),
+                interestExpect),
             const SizedBox(height: 20),
           ],
         ),

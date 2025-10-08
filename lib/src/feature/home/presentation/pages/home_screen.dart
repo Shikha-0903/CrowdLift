@@ -1,14 +1,11 @@
 import 'package:crowdlift/src/feature/auth/presentation/pages/log_out.dart';
-import 'package:crowdlift/src/feature/auth/presentation/pages/login_screen.dart';
 import 'package:crowdlift/src/feature/auth/presentation/widgets/about_app.dart';
 import 'package:crowdlift/src/feature/transaction/presentation/pages/transaction_history.dart';
 import 'package:crowdlift/src/feature/transaction/presentation/pages/payment_received.dart';
 import 'package:crowdlift/src/feature/user_profile/presentation/pages/my_profile.dart';
-import 'package:crowdlift/src/core/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lottie/lottie.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:crowdlift/src/feature/user_profile/presentation/pages/user_profile_screen.dart';
@@ -90,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } catch (e) {
-      print("Error fetching user name: $e");
+      debugPrint("Error fetching user name: $e");
     }
   }
 
@@ -360,10 +357,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             email: user['email'],
                             phone: user['phone'],
                             role: user['role'],
-                            capacity_about: user['capacity_about'],
-                            interest_expect: user['interest_expect'],
+                            capacityAbout: user['capacity_about'],
+                            interestExpect: user['interest_expect'],
                             description: user['description'],
-                            profile_image: user['profile_image'],
+                            profileImage: user['profile_image'],
                             aim: user['aim'],
                           ),
                         ),
@@ -383,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20),
                         child: Text(
-                          "${greeting}!!",
+                          "$greeting !!",
                           style: GoogleFonts.titanOne(
                             color: Color(0xFF070527),
                             fontSize: 30,

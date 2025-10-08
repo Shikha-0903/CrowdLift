@@ -17,7 +17,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // Initialize Firebase for background messages
   await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
+  debugPrint("Handling a background message: ${message.messageId}");
 }
 
 // Global navigation function for notification taps - simplified for your ChatScreen
@@ -45,7 +45,7 @@ void handleInitialMessage(RemoteMessage? message) {
         navigateToChatScreen(receiverId, receiverName);
       });
     } catch (e) {
-      print('Error handling initial message: $e');
+      debugPrint('Error handling initial message: $e');
     }
   }
 }
@@ -79,7 +79,7 @@ Future<void> main() async {
 
         navigateToChatScreen(receiverId, receiverName);
       } catch (e) {
-        print('Error handling notification tap: $e');
+        debugPrint('Error handling notification tap: $e');
       }
     }
   });
@@ -90,6 +90,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -101,6 +102,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthStateHandler extends StatelessWidget {
+  const AuthStateHandler({super.key});
   @override
   Widget build(BuildContext context) {
     // Use FirebaseAuth to check the current user

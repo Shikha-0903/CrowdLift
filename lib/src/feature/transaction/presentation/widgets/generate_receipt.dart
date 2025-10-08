@@ -9,7 +9,7 @@ import 'package:open_file/open_file.dart';
 class ReceiptScreen extends StatelessWidget {
   final Map<String, dynamic> transactionData;
 
-  ReceiptScreen({required this.transactionData});
+  const ReceiptScreen({super.key, required this.transactionData});
 
   @override
   Widget build(BuildContext context) {

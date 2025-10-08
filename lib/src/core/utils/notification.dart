@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +30,7 @@ class NotificationService {
   bool _isUserOnline = false;
 
   // Flag to avoid duplicate notifications
-  Set<String> _processedNotifications = {};
+  final Set<String> _processedNotifications = {};
 
   // Initialize notification channels and request permissions
   Future<void> initialize() async {
@@ -43,7 +44,7 @@ class NotificationService {
         provisional: false,
       );
 
-      print(
+      debugPrint(
           'User notification permission status: ${settings.authorizationStatus}');
 
       // Configure foreground notification presentation options
@@ -84,7 +85,7 @@ class NotificationService {
 
       // Print token for debugging
       String? token = await _firebaseMessaging.getToken();
-      print('FCM Token: $token');
+      debugPrint('FCM Token: $token');
 
       // Set up user online status
       _setUserOnline();
@@ -108,7 +109,7 @@ class NotificationService {
         _handleNotificationTap(initialMessage);
       }
     } catch (e) {
-      print('Error initializing notification service: $e');
+      debugPrint('Error initializing notification service: $e');
       // Rethrow to allow handling by the caller
       rethrow;
     }
@@ -141,13 +142,13 @@ class NotificationService {
         String receiverId = payloadData['receiverId'];
         String receiverName = payloadData['receiverName'];
 
-        print('Notification tapped with payload: ${response.payload}');
-        print('Navigating to chat with $receiverName (ID: $receiverId)');
+        debugPrint('Notification tapped with payload: ${response.payload}');
+        debugPrint('Navigating to chat with $receiverName (ID: $receiverId)');
 
         // Navigate to chat screen using the global function
         navigateToChatScreen(receiverId, receiverName);
       } catch (e) {
-        print('Error parsing notification payload: $e');
+        debugPrint('Error parsing notification payload: $e');
       }
     }
   }
@@ -155,9 +156,9 @@ class NotificationService {
   // Handle messages when app is in foreground
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
     try {
-      print('Handling foreground message: ${message.messageId}');
-      print('Message data: ${message.data}');
-      print('Message notification: ${message.notification?.title}');
+      debugPrint('Handling foreground message: ${message.messageId}');
+      debugPrint('Message data: ${message.data}');
+      debugPrint('Message notification: ${message.notification?.title}');
 
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -187,19 +188,19 @@ class NotificationService {
         );
       }
     } catch (e) {
-      print('Error handling foreground message: $e');
+      debugPrint('Error handling foreground message: $e');
     }
   }
 
   // Handle notification tap from background state
   void _handleNotificationTap(RemoteMessage message) {
     try {
-      print('Notification tapped in background: ${message.messageId}');
-      print('Message data: ${message.data}');
+      debugPrint('Notification tapped in background: ${message.messageId}');
+      debugPrint('Message data: ${message.data}');
       // Navigate to the appropriate chat screen
       // This needs to be implemented with your navigation service
     } catch (e) {
-      print('Error handling notification tap: $e');
+      debugPrint('Error handling notification tap: $e');
     }
   }
 
@@ -210,7 +211,7 @@ class NotificationService {
 
       // Check if user is authenticated
       if (_auth.currentUser == null) {
-        print('User not authenticated, cannot save token');
+        debugPrint('User not authenticated, cannot save token');
         return;
       }
 
@@ -228,7 +229,7 @@ class NotificationService {
         });
       }
     } catch (e) {
-      print('Error saving token to Firestore: $e');
+      debugPrint('Error saving token to Firestore: $e');
     }
   }
 
@@ -253,7 +254,7 @@ class NotificationService {
         }
       });
     } catch (e) {
-      print('Error setting user online status: $e');
+      debugPrint('Error setting user online status: $e');
     }
   }
 
@@ -270,7 +271,7 @@ class NotificationService {
         'lastSeen': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error setting user offline status: $e');
+      debugPrint('Error setting user offline status: $e');
     }
   }
 
@@ -324,7 +325,7 @@ class NotificationService {
     try {
       // Skip if sending to self
       if (receiverId == _auth.currentUser!.uid) {
-        print('Skipping notification to self');
+        debugPrint('Skipping notification to self');
         return;
       }
 
@@ -338,8 +339,7 @@ class NotificationService {
 
         // Store notification in Firestore regardless of online status
         String notificationId =
-            DateTime.now().millisecondsSinceEpoch.toString() +
-                '_${_auth.currentUser!.uid}_$receiverId';
+            '${DateTime.now().millisecondsSinceEpoch.toString()}_${_auth.currentUser!.uid}_$receiverId';
 
         await _firestore.collection('notifications').doc(notificationId).set({
           'title': senderName,
@@ -355,13 +355,13 @@ class NotificationService {
           'processed': false,
         });
 
-        print(
+        debugPrint(
             'Notification created for ${isReceiverOnline ? "online" : "offline"} user $receiverId');
       } else {
-        print('Receiver user document not found');
+        debugPrint('Receiver user document not found');
       }
     } catch (e) {
-      print('Error sending notification: $e');
+      debugPrint('Error sending notification: $e');
     }
   }
 
@@ -373,7 +373,7 @@ class NotificationService {
     // Stop any existing subscription
     stopNotificationListener();
 
-    print('Starting notification listener for user $userId');
+    debugPrint('Starting notification listener for user $userId');
 
     // Create a stream that listens for new notifications for this user
     _notificationStream = _firestore
@@ -396,7 +396,7 @@ class NotificationService {
         }
       }
     }, onError: (error) {
-      print('Error in notification listener: $error');
+      debugPrint('Error in notification listener: $error');
       // Try to restart the listener after a delay
       Future.delayed(Duration(seconds: 10), () {
         startNotificationListener();
@@ -420,7 +420,7 @@ class NotificationService {
           .limit(10) // Limit to avoid overwhelming the user
           .get();
 
-      print(
+      debugPrint(
           'Processing ${pendingNotifications.docs.length} pending notifications');
 
       for (var doc in pendingNotifications.docs) {
@@ -431,7 +431,7 @@ class NotificationService {
         }
       }
     } catch (e) {
-      print('Error processing pending notifications: $e');
+      debugPrint('Error processing pending notifications: $e');
     }
   }
 
@@ -473,10 +473,10 @@ class NotificationService {
           .doc(notificationId)
           .update({'processed': true});
 
-      print(
+      debugPrint(
           'Displayed notification: ${notification['title']} with payload: $payloadJson');
     } catch (e) {
-      print('Error handling incoming notification: $e');
+      debugPrint('Error handling incoming notification: $e');
     }
   }
 
@@ -484,7 +484,7 @@ class NotificationService {
   void stopNotificationListener() {
     _notificationSubscription?.cancel();
     _notificationSubscription = null;
-    print('Stopped notification listener');
+    debugPrint('Stopped notification listener');
   }
 
   // Mark notifications as read for a specific chat
@@ -506,9 +506,10 @@ class NotificationService {
         await doc.reference.update({'read': true});
       }
 
-      print('Marked ${notificationSnapshot.docs.length} notifications as read');
+      debugPrint(
+          'Marked ${notificationSnapshot.docs.length} notifications as read');
     } catch (e) {
-      print('Error marking notifications as read: $e');
+      debugPrint('Error marking notifications as read: $e');
       rethrow;
     }
   }
@@ -528,7 +529,7 @@ class NotificationService {
 
       return notificationSnapshot.docs.length;
     } catch (e) {
-      print('Error getting unread notification count: $e');
+      debugPrint('Error getting unread notification count: $e');
       return 0;
     }
   }
@@ -545,7 +546,7 @@ class NotificationService {
     try {
       await _notificationsPlugin.cancelAll();
     } catch (e) {
-      print('Error resetting badge count: $e');
+      debugPrint('Error resetting badge count: $e');
     }
   }
 }

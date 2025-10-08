@@ -20,7 +20,7 @@ class PaymentGatewayScreen extends StatefulWidget {
       {super.key, required this.receiverName, required this.receiverId});
 
   @override
-  _PaymentGatewayScreenState createState() => _PaymentGatewayScreenState();
+  State<PaymentGatewayScreen> createState() => _PaymentGatewayScreenState();
 }
 
 class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
@@ -64,7 +64,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
           .doc(user.uid)
           .get();
 
-      if (!userDoc.exists) {
+      if (!userDoc.exists && mounted) {
         showCustomSnackBar(context, "User details not found.");
         return;
       }
@@ -75,6 +75,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
           userDoc['phone'] ?? ""; // Assuming 'phone' is stored in Firestore
 
       String amountText = _amountController.text.trim();
+      if (!mounted) return;
       if (amountText.isEmpty || double.tryParse(amountText) == null) {
         showCustomSnackBar(context, "Please enter a valid amount.");
         return;
@@ -118,6 +119,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
           .collection('crowd_user')
           .doc(user.uid)
           .get();
+      if (!mounted) return;
 
       if (!userDoc.exists) {
         showCustomSnackBar(context, "User details not found.");
@@ -153,6 +155,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
           .collection('receipt') // Sub-collection for transactions
           .add(transactionData);
       debugPrint("📌 Transaction saved successfully!");
+      if (!mounted) return;
 
       // Show success message
       showCustomSnackBar(context, "Payment Successful!");
@@ -166,6 +169,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
 
       // Pop the screen after a short delay
       Future.delayed(Duration(milliseconds: 500), () {
+        if (!mounted) return;
         Navigator.pop(context);
 
         // Show share dialog after popping
@@ -174,6 +178,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
         });
       });
     } catch (e) {
+      if (!mounted) return;
       debugPrint("⚠️ Error saving transaction: $e");
       showCustomSnackBar(context, "Failed to save transaction.");
     }
@@ -310,6 +315,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
           _dialogButton("Cancel", () => Navigator.pop(context)),
           _dialogButton("Share", () async {
             await _shareReceipt(filePath);
+            if (!context.mounted) return;
             Navigator.pop(context);
           }),
           _dialogButton("Download", () {
@@ -339,6 +345,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
     try {
       await Share.shareXFiles([XFile(filePath)],
           text: "Here is your payment receipt.");
+      if (!mounted) return;
     } catch (e) {
       debugPrint("Share error: $e");
       showCustomSnackBar(context, "Could not share the receipt");
@@ -357,7 +364,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
         backgroundColor: const Color(0xFF070527),
       ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: 400,
           child: Padding(
             padding: const EdgeInsets.all(16.0),

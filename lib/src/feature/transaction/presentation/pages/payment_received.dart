@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../widgets/generate_receipt.dart';
 
 class TransactionReceiptPage extends StatelessWidget {
+  TransactionReceiptPage({super.key});
   final User? user = FirebaseAuth.instance.currentUser;
 
   @override
@@ -61,7 +62,7 @@ class TransactionReceiptPage extends StatelessWidget {
 // 🏷️ Display Each Transaction
 class TransactionTile extends StatelessWidget {
   final Map<String, dynamic> data;
-  const TransactionTile(this.data, {Key? key}) : super(key: key);
+  const TransactionTile(this.data, {super.key});
 
   @override
   Widget build(BuildContext context) {

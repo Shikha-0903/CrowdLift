@@ -135,7 +135,7 @@ class AboutApp extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.white.withOpacity(0.15),
+          backgroundColor: Colors.white.withAlpha(150),
           radius: 25,
           child: Icon(icon, size: 28, color: Colors.white),
         ),

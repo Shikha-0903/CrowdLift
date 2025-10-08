@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class SearchUserService {
   static final SearchUserService _instance = SearchUserService._internal();
@@ -40,12 +41,12 @@ class SearchUserService {
         }
       }
 
-      print("Search query: $query");
-      print("Results count: ${results.length}");
+      debugPrint("Search query: $query");
+      debugPrint("Results count: ${results.length}");
 
       return results;
     } catch (e) {
-      print("Search error: $e");
+      debugPrint("Search error: $e");
       return [];
     }
   }

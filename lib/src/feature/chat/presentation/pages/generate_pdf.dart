@@ -9,10 +9,11 @@ class GeneratePdfScreen extends StatefulWidget {
   final Agreement agreement;
   final String chatId;
 
-  GeneratePdfScreen({required this.agreement, required this.chatId});
+  const GeneratePdfScreen(
+      {super.key, required this.agreement, required this.chatId});
 
   @override
-  _GeneratePdfScreenState createState() => _GeneratePdfScreenState();
+  State<GeneratePdfScreen> createState() => _GeneratePdfScreenState();
 }
 
 class _GeneratePdfScreenState extends State<GeneratePdfScreen> {
