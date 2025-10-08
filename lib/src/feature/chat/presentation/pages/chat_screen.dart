@@ -19,18 +19,16 @@ class ChatScreen extends StatefulWidget {
   final String receiverName;
 
   const ChatScreen(
-      {Key? key, required this.receiverId, required this.receiverName})
-      : super(key: key);
+      {super.key, required this.receiverId, required this.receiverName});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
   // Add notification service instance
   final NotificationService _notificationService = NotificationService();
   bool _isSeeker = false;
@@ -86,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       }
     } catch (e) {
-      print("Error fetching role: $e");
+      debugPrint("Error fetching role: $e");
       setState(() {
         _isSeeker = false;
       });
@@ -153,6 +151,7 @@ class _ChatScreenState extends State<ChatScreen> {
         senderName: _cachedSenderName!,
         chatId: chatId,
       );
+      if (!mounted) return;
 
       _messageController.clear();
       // Reset reply state
@@ -205,7 +204,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .collection('messages')
           .doc(messageId)
           .update({'isDeleted': true});
-
+      if (!mounted) return;
       showCustomSnackBar(context, "Message deleted");
     } catch (e) {
       showCustomSnackBar(context, "Error deleting message: $e");
@@ -220,6 +219,7 @@ class _ChatScreenState extends State<ChatScreen> {
         type: FileType.any,
         allowMultiple: false,
       );
+      if (!mounted) return;
 
       if (result == null) {
         showCustomSnackBar(context, "No file selected!");
@@ -240,6 +240,7 @@ class _ChatScreenState extends State<ChatScreen> {
         final ioFile = io.File(filePath);
         fileBytes = await ioFile.readAsBytes();
       }
+      if (!mounted) return;
 
       if (fileBytes == null) {
         showCustomSnackBar(context, "Failed to read file bytes.");
@@ -268,6 +269,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
       // Get file URL
       String fileUrl = await snapshot.ref.getDownloadURL();
+      if (!mounted) return;
 
       // Close loading dialog
       Navigator.of(context, rootNavigator: true).pop();
@@ -317,6 +319,7 @@ class _ChatScreenState extends State<ChatScreen> {
         _replyTo = null;
         _replyMessage = null;
       });
+      if (!mounted) return;
 
       showCustomSnackBar(context, "File sent successfully!");
     } catch (e) {
@@ -325,7 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
         Navigator.of(context, rootNavigator: true).pop();
       }
       showCustomSnackBar(context, "Error: ${e.toString()}");
-      print("File Upload Error: $e");
+      debugPrint("File Upload Error: $e");
     }
   }
 
@@ -339,7 +342,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
       return "User";
     } catch (e) {
-      print("Error fetching username: $e");
+      debugPrint("Error fetching username: $e");
       return "User";
     }
   }

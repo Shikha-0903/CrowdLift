@@ -60,6 +60,7 @@ class _EditProfileState extends State<EditProfile> {
           });
         }
       }
+      if (!mounted) return;
     } catch (e) {
       showCustomSnackBar(context, "Error loading user data: $e");
     } finally {
@@ -91,6 +92,7 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         _imageUrl = "";
       });
+      if (!mounted) return;
 
       showCustomSnackBar(context, "Profile image removed successfully!");
     } catch (e) {
@@ -122,6 +124,7 @@ class _EditProfileState extends State<EditProfile> {
                 if (pickedFile != null) {
                   uploadImage(File(pickedFile.path));
                 } else {
+                  if (!context.mounted) return;
                   showCustomSnackBar(context, "No image selected.");
                 }
               },
@@ -134,13 +137,14 @@ class _EditProfileState extends State<EditProfile> {
                   source: ImageSource.camera,
                   imageQuality: 50, // Reduce image size
                 );
+                if (!context.mounted) return;
                 Navigator.pop(context);
                 if (pickedFile != null) {
-                  print("Image picked: ${pickedFile.path}");
+                  debugPrint("Image picked: ${pickedFile.path}");
                   try {
                     await uploadImage(File(pickedFile.path));
                   } catch (e) {
-                    print("Error uploading image: $e");
+                    debugPrint("Error uploading image: $e");
                   }
                 } else {
                   showCustomSnackBar(context, "No image captured.");
@@ -180,6 +184,7 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         _imageUrl = downloadUrl;
       });
+      if (!mounted) return;
 
       showCustomSnackBar(context, "Profile image updated!");
     } catch (e) {
@@ -199,7 +204,7 @@ class _EditProfileState extends State<EditProfile> {
         'capacity_about': _capacityAbout.text,
         'interest_expect': _interestExpect.text,
       }, SetOptions(merge: true));
-
+      if (!mounted) return;
       showCustomSnackBar(context, 'Update successful!');
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MyProfile()));

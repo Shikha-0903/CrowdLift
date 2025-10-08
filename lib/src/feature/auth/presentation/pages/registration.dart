@@ -15,10 +15,10 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   String? _selectedRole;
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>(); // Form key for validation
 
@@ -113,7 +113,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       return querySnapshot.docs.isNotEmpty; // If found, phone number exists
     } catch (e) {
-      print('Error checking phone number: $e');
+      debugPrint('Error checking phone number: $e');
       return false; // Assume not found on error
     }
   }
@@ -127,6 +127,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       }
 
       bool phoneExists = await isPhoneNumberExists(_phoneController.text);
+      if (!mounted) return;
       if (phoneExists) {
         showCustomSnackBar(
             context, 'Phone number already exists. Please use another number.');
@@ -170,6 +171,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           }, SetOptions(merge: true));
 
           // Show success message
+          if (!mounted) return;
           showCustomSnackBar(context, 'Registration successful!');
 
           // Navigate to login screen
@@ -194,13 +196,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           } else if (e.message != null) {
             errorMessage = e.message!;
           }
+          if (!mounted) return;
 
           showCustomSnackBar(context, errorMessage);
         } catch (e) {
+          if (!mounted) return;
           showCustomSnackBar(context,
               'An error occurred during registration. Please try again.');
         }
       } else {
+        if (!mounted) return;
         showCustomSnackBar(context, 'You must accept the terms and conditions');
       }
     }
@@ -213,7 +218,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Container(
+            child: SizedBox(
               width: 400,
               child: Form(
                 key: _formKey, // Use the form key to manage validation
@@ -268,33 +273,31 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Column(
-                      children: [
-                        RadioListTile<String>(
-                          title: Text("Seeker",
-                              style: TextStyle(color: Color(0xFF6750a4))),
-                          value: "Seeker",
-                          groupValue: _selectedRole,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedRole = value;
-                            });
-                          },
-                          activeColor: Colors.white,
-                        ),
-                        RadioListTile<String>(
-                          title: Text("Investor",
-                              style: TextStyle(color: Color(0xFF6750a4))),
-                          value: "Investor",
-                          groupValue: _selectedRole,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedRole = value;
-                            });
-                          },
-                          activeColor: Colors.white,
-                        ),
-                      ],
+                    RadioGroup<String>(
+                      groupValue: _selectedRole,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedRole = value;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          RadioListTile<String>(
+                            title: const Text(
+                              "Seeker",
+                              style: TextStyle(color: Color(0xFF6750A4)),
+                            ),
+                            value: "Seeker",
+                          ),
+                          RadioListTile<String>(
+                            title: const Text(
+                              "Investor",
+                              style: TextStyle(color: Color(0xFF6750A4)),
+                            ),
+                            value: "Investor",
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
@@ -330,11 +333,10 @@ class TermsDialog extends StatefulWidget {
   final ValueChanged<bool> onAccept;
 
   const TermsDialog(
-      {required this.termsAccepted, required this.onAccept, Key? key})
-      : super(key: key);
+      {required this.termsAccepted, required this.onAccept, super.key});
 
   @override
-  _TermsDialogState createState() => _TermsDialogState();
+  State<TermsDialog> createState() => _TermsDialogState();
 }
 
 class _TermsDialogState extends State<TermsDialog> {

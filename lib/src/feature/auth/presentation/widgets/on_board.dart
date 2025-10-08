@@ -6,8 +6,9 @@ import 'package:crowdlift/src/feature/auth/presentation/pages/login_screen.dart'
 import "package:confetti/confetti.dart";
 
 class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
   @override
-  _OnboardingScreenState createState() => _OnboardingScreenState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {

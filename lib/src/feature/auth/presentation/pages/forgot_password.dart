@@ -23,6 +23,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
+      if (!mounted) return;
       showCustomSnackBar(
           context, 'Password reset email sent. Please check your inbox.');
       Navigator.pop(context);
@@ -47,7 +48,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
+          child: SizedBox(
             width: 400,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,

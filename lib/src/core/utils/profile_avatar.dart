@@ -7,14 +7,13 @@ class ProfileAvatar extends StatefulWidget {
   final double radius;
   final String userId;
 
-  const ProfileAvatar({Key? key, this.radius = 50, required this.userId})
-      : super(key: key);
+  const ProfileAvatar({super.key, this.radius = 50, required this.userId});
 
   @override
-  _ProfileAvatarState createState() => _ProfileAvatarState();
+  ProfileAvatarState createState() => ProfileAvatarState();
 }
 
-class _ProfileAvatarState extends State<ProfileAvatar> {
+class ProfileAvatarState extends State<ProfileAvatar> {
   String imageUrl = '';
   bool isLoading = true;
   StreamSubscription<DocumentSnapshot>? _profileSubscription;
@@ -71,7 +70,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
       Future.microtask(() {
         if (!mounted) return;
 
-        print("⚠️ Error fetching profile image: $error");
+        debugPrint("⚠️ Error fetching profile image: $error");
         if (mounted) {
           setState(() {
             imageUrl = '';

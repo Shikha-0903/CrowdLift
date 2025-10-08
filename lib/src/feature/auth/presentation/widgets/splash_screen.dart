@@ -4,10 +4,10 @@ import 'dart:async';
 class SplashScreen extends StatefulWidget {
   final Widget nextScreen;
 
-  const SplashScreen({Key? key, required this.nextScreen}) : super(key: key);
+  const SplashScreen({super.key, required this.nextScreen});
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen>
@@ -42,6 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
     _scaleController.forward().then((_) {
       _fadeController.forward();
       Future.delayed(Duration(milliseconds: 500), () {
+        if (!mounted) return;
         Navigator.of(context).pushReplacement(_createRoute());
       });
     });

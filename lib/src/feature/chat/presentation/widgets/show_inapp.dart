@@ -56,9 +56,10 @@ void showFileInApp(BuildContext context, String fileUrl, String fileName) {
                     IconButton(
                       icon: Icon(Icons.download, color: Colors.white),
                       onPressed: () async {
-                        if (await canLaunch(fileUrl)) {
-                          await launch(fileUrl);
+                        if (await canLaunchUrl(Uri.parse(fileUrl))) {
+                          await launchUrl(Uri.parse(fileUrl));
                         } else {
+                          if (!context.mounted) return;
                           showCustomSnackBar(
                               context, "Could not download file");
                         }
@@ -151,9 +152,10 @@ void showFileInApp(BuildContext context, String fileUrl, String fileName) {
                               ),
                             ),
                             onPressed: () async {
-                              if (await canLaunch(fileUrl)) {
-                                await launch(fileUrl);
+                              if (await canLaunchUrl(Uri.parse(fileUrl))) {
+                                await launchUrl(Uri.parse(fileUrl));
                               } else {
+                                if (!context.mounted) return;
                                 showCustomSnackBar(
                                     context, "Could not open file");
                               }

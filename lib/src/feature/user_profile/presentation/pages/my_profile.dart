@@ -1,4 +1,3 @@
-import 'package:crowdlift/src/feature/home/presentation/pages/home_screen.dart';
 import 'package:crowdlift/src/feature/user_profile/presentation/pages/edit_profile.dart';
 import 'package:crowdlift/src/core/utils/profile_avatar.dart';
 import 'package:flutter/material.dart';
@@ -22,14 +21,12 @@ class _MyProfileState extends State<MyProfile> {
   String interestExpect = "None";
   String capacityAbout = "None";
   String phone = "XXXXXXXXXX";
-  bool _mounted = false;
 
   final uid = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
-    _mounted = true;
     _fetchUserData(); // Call the new function to fetch data
   }
 
@@ -58,13 +55,13 @@ class _MyProfileState extends State<MyProfile> {
             });
           }
         } else {
-          print("User document does not exist");
+          debugPrint("User document does not exist");
         }
       } else {
-        print("User is not authenticated");
+        debugPrint("User is not authenticated");
       }
     } catch (e) {
-      print("Error fetching user data: $e");
+      debugPrint("Error fetching user data: $e");
     }
   }
 
@@ -184,7 +181,7 @@ class _MyProfileState extends State<MyProfile> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.deepPurple.withOpacity(0.1),
+                  color: Colors.deepPurple.withAlpha(100),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: Colors.deepPurple, size: 24),

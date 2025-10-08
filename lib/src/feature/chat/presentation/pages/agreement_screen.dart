@@ -10,10 +10,11 @@ class AgreementFormScreen extends StatefulWidget {
   final String chatId;
   final bool isSeeker;
 
-  AgreementFormScreen({required this.chatId, required this.isSeeker});
+  const AgreementFormScreen(
+      {super.key, required this.chatId, required this.isSeeker});
 
   @override
-  _AgreementFormScreenState createState() => _AgreementFormScreenState();
+  State<AgreementFormScreen> createState() => _AgreementFormScreenState();
 }
 
 class _AgreementFormScreenState extends State<AgreementFormScreen> {
@@ -68,7 +69,7 @@ class _AgreementFormScreenState extends State<AgreementFormScreen> {
         });
       }
     } catch (e) {
-      print("Error fetching agreement: $e");
+      debugPrint("Error fetching agreement: $e");
     } finally {
       setState(() {
         isLoading = false;
@@ -104,9 +105,10 @@ class _AgreementFormScreenState extends State<AgreementFormScreen> {
           .collection('agreements')
           .doc(widget.chatId)
           .set(updateData, SetOptions(merge: true));
+      if (!mounted) return;
       showCustomSnackBar(context, "Agreement saved successfully!");
     } catch (e) {
-      print("Error saving agreement: $e");
+      debugPrint("Error saving agreement: $e");
     }
   }
 
@@ -219,16 +221,16 @@ class _AgreementFormScreenState extends State<AgreementFormScreen> {
                                     _saveAgreementData();
                                   }
                                 },
-                          child: Text(
-                            "update",
-                            style: TextStyle(color: Colors.white),
-                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: agreementLocked
                                 ? Colors.grey
                                 : Theme.of(context).primaryColor,
                             padding: EdgeInsets.symmetric(
                                 vertical: 14, horizontal: 24),
+                          ),
+                          child: Text(
+                            "update",
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                         ElevatedButton(
@@ -272,14 +274,14 @@ class _AgreementFormScreenState extends State<AgreementFormScreen> {
                               }
                             }
                           },
-                          child: Text(
-                            "Generate Agreement PDF",
-                            style: TextStyle(color: Colors.white),
-                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             padding: EdgeInsets.symmetric(
                                 vertical: 14, horizontal: 24),
+                          ),
+                          child: Text(
+                            "Generate Agreement PDF",
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ],
@@ -305,7 +307,7 @@ class _AgreementFormScreenState extends State<AgreementFormScreen> {
                         if (await canLaunchUrl(emailUri)) {
                           await launchUrl(emailUri);
                         } else {
-                          print("Could not launch email app");
+                          debugPrint("Could not launch email app");
                         }
                       },
                       child: Text("Contact admin for changes"),
