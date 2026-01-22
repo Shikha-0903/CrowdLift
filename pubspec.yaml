@@ -79,7 +79,7 @@ flutter:
   assets:
     - assets/images/
     - assets/animations/
-    - assets/.env
+    - .env
 
 
   fonts:

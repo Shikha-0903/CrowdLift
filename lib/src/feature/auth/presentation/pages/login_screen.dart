@@ -26,6 +26,13 @@ class LoginScreenState extends State<LoginScreen> {
     }
 
     try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+
       showCustomSnackBar(context, 'Login Successful');
 
       Navigator.pushReplacement(
