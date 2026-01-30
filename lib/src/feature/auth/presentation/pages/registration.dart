@@ -1,20 +1,37 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowdlift/src/core/router/all/auth_routes.dart';
 import 'package:crowdlift/src/core/widgets/custom_snack_bar.dart';
 import 'package:crowdlift/src/core/widgets/custom_text_field.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:crowdlift/src/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:crowdlift/src/feature/auth/presentation/bloc/auth_event.dart';
+import 'package:crowdlift/src/feature/auth/presentation/bloc/auth_state.dart';
+import 'package:crowdlift/src/core/di/service_locator.dart';
 import 'package:go_router/go_router.dart';
 
-class RegistrationScreen extends StatefulWidget {
+class RegistrationScreen extends StatelessWidget {
   const RegistrationScreen({super.key});
 
   @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => serviceLocator<AuthBloc>(),
+      child: const _RegistrationScreenContent(),
+    );
+  }
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class _RegistrationScreenContent extends StatefulWidget {
+  const _RegistrationScreenContent();
+
+  @override
+  State<_RegistrationScreenContent> createState() =>
+      _RegistrationScreenContentState();
+}
+
+class _RegistrationScreenContentState
+    extends State<_RegistrationScreenContent> {
   String? _selectedRole;
   final _phoneController = TextEditingController();
   final _nameController = TextEditingController();
@@ -105,103 +122,57 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return null;
   }
 
-  Future<bool> isPhoneNumberExists(String phoneNumber) async {
-    try {
-      var querySnapshot = await FirebaseFirestore.instance
-          .collection('crowd_user') // Change to your Firestore collection name
-          .where('phone', isEqualTo: phoneNumber)
-          .get();
-
-      return querySnapshot.docs.isNotEmpty; // If found, phone number exists
-    } catch (e) {
-      debugPrint('Error checking phone number: $e');
-      return false; // Assume not found on error
-    }
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
-  Future<void> registerUser() async {
+  Future<void> _checkPhoneAndRegister() async {
     if (_formKey.currentState!.validate()) {
       // Check if a role is selected
       if (_selectedRole == null) {
         showCustomSnackBar(context, "Please select your role");
-        return; // Exit the function if no role is selected
-      }
-
-      bool phoneExists = await isPhoneNumberExists(_phoneController.text);
-      if (!mounted) return;
-      if (phoneExists) {
-        showCustomSnackBar(
-            context, 'Phone number already exists. Please use another number.');
         return;
       }
-      // Show the terms dialog before proceeding with registration
-      bool? termsAccepted = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return TermsDialog(
-            termsAccepted: false,
-            onAccept: (bool value) {},
+
+      // Check phone number existence
+      context.read<AuthBloc>().add(
+            CheckPhoneNumberExistsRequested(
+              phoneNumber: _phoneController.text,
+            ),
           );
-        },
-      );
+    }
+  }
 
-      if (termsAccepted != null && termsAccepted) {
-        try {
-          // Create a user in Firebase Authentication
-          UserCredential userCredential =
-              await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: _emailController.text,
-            password: _passwordController.text,
+  Future<void> _handleRegistration() async {
+    // Show the terms dialog before proceeding with registration
+    final termsAccepted = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return TermsDialog(
+          termsAccepted: false,
+          onAccept: (bool value) {},
+        );
+      },
+    );
+
+    if (termsAccepted != null && termsAccepted) {
+      if (!mounted) return;
+      context.read<AuthBloc>().add(
+            RegisterRequested(
+              name: _nameController.text,
+              email: _emailController.text,
+              password: _passwordController.text,
+              phone: _phoneController.text,
+              role: _selectedRole!,
+            ),
           );
-
-          // Save user data to Firestore
-          FirebaseFirestore.instance
-              .collection('crowd_user')
-              .doc(userCredential.user!.uid)
-              .set({
-            'name': _nameController.text,
-            'email': _emailController.text,
-            'phone': _phoneController.text,
-            'role': _selectedRole,
-            'uid': userCredential.user!.uid,
-            'description': 'Not mentioned',
-            'capacity_about': 'Not mentioned',
-            'interest_expect': 'Not mentioned',
-            'profile_image': 'Note mentioned',
-            'aim': 'Not mentioned'
-          }, SetOptions(merge: true));
-
-          // Show success message
-          if (!mounted) return;
-          showCustomSnackBar(context, 'Registration successful!');
-
-          // Navigate to login screen
-          context.pushReplacement(AuthRoutes.loginScreen);
-        } on FirebaseAuthException catch (e) {
-          String errorMessage = 'Registration failed';
-
-          // Handle specific Firebase Auth errors with more user-friendly messages
-          if (e.code == 'email-already-in-use') {
-            errorMessage =
-                'This email is already registered. Please use another email or login.';
-          } else if (e.code == 'weak-password') {
-            errorMessage =
-                'The password provided is too weak. Please use a stronger password.';
-          } else if (e.code == 'invalid-email') {
-            errorMessage = 'The email address is not valid.';
-          } else if (e.message != null) {
-            errorMessage = e.message!;
-          }
-          if (!mounted) return;
-
-          showCustomSnackBar(context, errorMessage);
-        } catch (e) {
-          if (!mounted) return;
-          showCustomSnackBar(context,
-              'An error occurred during registration. Please try again.');
-        }
-      } else {
-        if (!mounted) return;
+    } else {
+      if (mounted) {
         showCustomSnackBar(context, 'You must accept the terms and conditions');
       }
     }
@@ -209,113 +180,156 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SizedBox(
-              width: 400,
-              child: Form(
-                key: _formKey, // Use the form key to manage validation
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/login.png"),
-                    const SizedBox(height: 10),
-                    ReusableTextField(
-                      controller: _nameController,
-                      hintText: "Name",
-                      prefixIcon: Icons.person,
-                      validator: validateName,
-                    ),
-                    const SizedBox(height: 20),
-                    ReusableTextField(
-                      controller: _emailController,
-                      hintText: "Email",
-                      prefixIcon: Icons.email,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: validateEmail,
-                    ),
-                    const SizedBox(height: 20),
-                    ReusableTextField(
-                      controller: _passwordController,
-                      hintText: "Password",
-                      prefixIcon: Icons.password,
-                      isPassword: true,
-                      validator: validatePassword,
-                    ),
-                    const SizedBox(height: 20),
-                    ReusableTextField(
-                      controller: _phoneController,
-                      hintText: "Phone no.",
-                      prefixIcon: Icons.phone,
-                      keyboardType: TextInputType.phone,
-                      validator: validatePhone,
-                    ),
-                    const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text(
-                          "Select your role",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    RadioGroup<String>(
-                      groupValue: _selectedRole,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedRole = value;
-                        });
-                      },
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is PhoneNumberExists) {
+          showCustomSnackBar(context,
+              'Phone number already exists. Please use another number.');
+        } else if (state is PhoneNumberAvailable) {
+          _handleRegistration();
+        } else if (state is RegisterSuccess) {
+          showCustomSnackBar(context, 'Registration successful!');
+          context.pushReplacement(AuthRoutes.loginScreen);
+        } else if (state is AuthError) {
+          showCustomSnackBar(context, state.message);
+        }
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          final isLoading = state is AuthLoading;
+
+          return Scaffold(
+            body: SingleChildScrollView(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
+                    width: 400,
+                    child: Form(
+                      key: _formKey,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          RadioListTile<String>(
-                            title: const Text(
-                              "Seeker",
-                              style: TextStyle(color: Color(0xFF6750A4)),
-                            ),
-                            value: "Seeker",
+                          Image.asset("assets/images/login.png"),
+                          const SizedBox(height: 10),
+                          ReusableTextField(
+                            controller: _nameController,
+                            hintText: "Name",
+                            prefixIcon: Icons.person,
+                            validator: validateName,
                           ),
-                          RadioListTile<String>(
-                            title: const Text(
-                              "Investor",
-                              style: TextStyle(color: Color(0xFF6750A4)),
+                          const SizedBox(height: 20),
+                          ReusableTextField(
+                            controller: _emailController,
+                            hintText: "Email",
+                            prefixIcon: Icons.email,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: validateEmail,
+                          ),
+                          const SizedBox(height: 20),
+                          ReusableTextField(
+                            controller: _passwordController,
+                            hintText: "Password",
+                            prefixIcon: Icons.password,
+                            isPassword: true,
+                            validator: validatePassword,
+                          ),
+                          const SizedBox(height: 20),
+                          ReusableTextField(
+                            controller: _phoneController,
+                            hintText: "Phone no.",
+                            prefixIcon: Icons.phone,
+                            keyboardType: TextInputType.phone,
+                            validator: validatePhone,
+                          ),
+                          const SizedBox(height: 20),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: Text(
+                                "Select your role",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ),
-                            value: "Investor",
+                          ),
+                          const SizedBox(height: 10),
+                          IgnorePointer(
+                            ignoring: isLoading,
+                            child: Opacity(
+                              opacity: isLoading ? 0.5 : 1.0,
+                              child: RadioGroup<String>(
+                                groupValue: _selectedRole,
+                                onChanged: (value) {
+                                  if (!isLoading) {
+                                    setState(() {
+                                      _selectedRole = value;
+                                    });
+                                  }
+                                },
+                                child: Column(
+                                  children: [
+                                    RadioListTile<String>(
+                                      title: const Text(
+                                        "Seeker",
+                                        style:
+                                            TextStyle(color: Color(0xFF6750A4)),
+                                      ),
+                                      value: "Seeker",
+                                    ),
+                                    RadioListTile<String>(
+                                      title: const Text(
+                                        "Investor",
+                                        style:
+                                            TextStyle(color: Color(0xFF6750A4)),
+                                      ),
+                                      value: "Investor",
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed:
+                                isLoading ? null : _checkPhoneAndRegister,
+                            child: isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                  )
+                                : const Text("Register"),
+                          ),
+                          const SizedBox(height: 10),
+                          TextButton(
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    context.push(AuthRoutes.loginScreen);
+                                  },
+                            child: const Text("Go to Login"),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed:
-                          registerUser, // Call registerUser function on press
-                      child: Text("Register"),
-                    ),
-                    SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        context.push(AuthRoutes.loginScreen);
-                      },
-                      child: Text("Go to Login"),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+            backgroundColor: const Color(0xFF070527),
+          );
+        },
       ),
-      backgroundColor: const Color(0xFF070527),
     );
   }
 }
