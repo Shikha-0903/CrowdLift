@@ -1,4 +1,5 @@
 import 'package:crowdlift/src/core/router/routes.dart';
+import 'package:crowdlift/src/core/di/init_dependencies.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -113,6 +114,9 @@ Future<void> main() async {
   } catch (e) {
     debugPrint(' Error initializing notifications: $e');
   }
+
+  // Initialize dependencies
+  await initDependencies();
 
   runApp(const MyApp());
 }

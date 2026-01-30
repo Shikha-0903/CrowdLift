@@ -1,81 +1,112 @@
 import 'package:crowdlift/src/core/widgets/custom_snack_bar.dart';
 import 'package:crowdlift/src/core/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:crowdlift/src/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:crowdlift/src/feature/auth/presentation/bloc/auth_event.dart';
+import 'package:crowdlift/src/feature/auth/presentation/bloc/auth_state.dart';
+import 'package:crowdlift/src/core/di/service_locator.dart';
 
-class ForgotPassword extends StatefulWidget {
+class ForgotPassword extends StatelessWidget {
   const ForgotPassword({super.key});
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => serviceLocator<AuthBloc>(),
+      child: const _ForgotPasswordContent(),
+    );
+  }
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
+class _ForgotPasswordContent extends StatefulWidget {
+  const _ForgotPasswordContent();
+
+  @override
+  State<_ForgotPasswordContent> createState() => _ForgotPasswordContentState();
+}
+
+class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
   final TextEditingController emailController = TextEditingController();
 
-  Future<void> sendPasswordResetEmail() async {
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  void _handleSendPasswordResetEmail() {
     if (emailController.text.isEmpty) {
       showCustomSnackBar(
           context, 'Please enter your email to reset the password.');
       return;
     }
 
-    try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: emailController.text.trim());
-      if (!mounted) return;
-      showCustomSnackBar(
-          context, 'Password reset email sent. Please check your inbox.');
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      String message = 'An error occurred while sending the reset email.';
-      if (e.code == 'user-not-found') {
-        message = 'No user found for that email.';
-      } else if (e.code == 'invalid-email') {
-        message = 'The email address is not valid.';
-      }
-
-      showCustomSnackBar(context, message);
-    } catch (e) {
-      showCustomSnackBar(context, 'An unexpected error occurred: $e');
-    }
+    context.read<AuthBloc>().add(
+          SendPasswordResetEmailRequested(email: emailController.text),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-          child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SizedBox(
-            width: 400,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 80,
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is PasswordResetEmailSent) {
+          showCustomSnackBar(
+              context, 'Password reset email sent. Please check your inbox.');
+          Navigator.pop(context);
+        } else if (state is AuthError) {
+          showCustomSnackBar(context, state.message);
+        }
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          final isLoading = state is AuthLoading;
+
+          return Scaffold(
+            body: SingleChildScrollView(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
+                    width: 400,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 80),
+                        Image.asset("assets/images/login.png"),
+                        ReusableTextField(
+                          controller: emailController,
+                          hintText: "Email",
+                          keyboardType: TextInputType.emailAddress,
+                          prefixIcon: Icons.email,
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed:
+                              isLoading ? null : _handleSendPasswordResetEmail,
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : const Text("Send Password"),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                Image(image: AssetImage("assets/images/login.png")),
-                ReusableTextField(
-                  controller: emailController,
-                  hintText: "Email",
-                  keyboardType: TextInputType.emailAddress,
-                  prefixIcon: Icons.email, // Mandatory Prefix Icon
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  onPressed: sendPasswordResetEmail,
-                  child: Text("Send Password"),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      )),
-      backgroundColor: const Color(0xFF070527),
+            backgroundColor: const Color(0xFF070527),
+          );
+        },
+      ),
     );
   }
 }
