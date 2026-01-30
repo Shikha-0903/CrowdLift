@@ -1,7 +1,8 @@
+import 'package:crowdlift/src/core/router/all/auth_routes.dart';
 import 'package:crowdlift/src/core/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'login_screen.dart'; // Update the path as needed
+import 'package:go_router/go_router.dart';
 
 class LogoutHelper {
   static void showLogoutDialog(BuildContext context) {
@@ -82,11 +83,7 @@ class LogoutHelper {
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
                 if (context.mounted) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                    (route) => false, // Remove all previous screens
-                  );
+                  context.go(AuthRoutes.loginScreen);
                   showCustomSnackBar(context, "We will meet Soon");
                 }
               },

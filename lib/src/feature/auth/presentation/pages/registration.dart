@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crowdlift/src/feature/auth/presentation/pages/login_screen.dart';
+import 'package:crowdlift/src/core/router/all/auth_routes.dart';
 import 'package:crowdlift/src/core/widgets/custom_snack_bar.dart';
 import 'package:crowdlift/src/core/widgets/custom_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:go_router/go_router.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -175,12 +176,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           showCustomSnackBar(context, 'Registration successful!');
 
           // Navigate to login screen
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    LoginScreen()), // Make sure LoginScreen is implemented
-          );
+          context.pushReplacement(AuthRoutes.loginScreen);
         } on FirebaseAuthException catch (e) {
           String errorMessage = 'Registration failed';
 
@@ -308,11 +304,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
-                        );
+                        context.push(AuthRoutes.loginScreen);
                       },
                       child: Text("Go to Login"),
                     ),

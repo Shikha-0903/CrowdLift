@@ -1,11 +1,10 @@
-import 'package:crowdlift/src/feature/auth/presentation/pages/registration.dart';
-import 'package:crowdlift/src/feature/auth/presentation/widgets/about_app.dart';
+import 'package:crowdlift/src/core/router/all/auth_routes.dart';
+import 'package:crowdlift/src/core/router/all/home_routes.dart';
 import 'package:crowdlift/src/core/widgets/custom_snack_bar.dart';
 import 'package:crowdlift/src/core/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:crowdlift/src/feature/home/presentation/pages/home_screen.dart';
-import 'forgot_password.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,11 +33,7 @@ class LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       showCustomSnackBar(context, 'Login Successful');
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+      context.pushReplacement(HomeRoutes.homePage);
     } on FirebaseAuthException catch (e) {
       String message;
 
@@ -93,10 +88,7 @@ class LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerLeft,
                       child: IconButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AboutApp()),
-                          );
+                          context.push(AuthRoutes.aboutAppPage);
                         },
                         icon: Icon(Icons.info),
                         color: Colors.white,
@@ -122,10 +114,7 @@ class LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ForgotPassword()));
+                          context.push(AuthRoutes.forgotPasswordPage);
                         },
                         child: const Text(
                           'Forgot Password?',
@@ -144,11 +133,7 @@ class LoginScreenState extends State<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegistrationScreen()),
-                        );
+                        context.push(AuthRoutes.registrationPage);
                       },
                       child: const Text("Don't have an account? Register here"),
                     ),
