@@ -1,8 +1,9 @@
+import 'package:crowdlift/src/core/router/all/auth_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:crowdlift/src/feature/auth/presentation/pages/login_screen.dart';
 import "package:confetti/confetti.dart";
 
 class OnboardingScreen extends StatefulWidget {
@@ -28,10 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await Future.delayed(Duration(seconds: 2));
 
     if (!mounted) return; // Prevents navigation if widget is disposed
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
+    context.go(AuthRoutes.loginScreen);
   }
 
   Widget _buildPage(

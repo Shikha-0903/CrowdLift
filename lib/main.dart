@@ -1,8 +1,5 @@
-import 'package:crowdlift/src/feature/home/presentation/pages/home_screen.dart';
-import 'package:crowdlift/src/feature/auth/presentation/widgets/on_board.dart';
-import 'package:crowdlift/src/feature/auth/presentation/widgets/splash_screen.dart';
+import 'package:crowdlift/src/core/router/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -125,32 +122,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
+    return MaterialApp.router(
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
-      home: const AuthStateHandler(),
-    );
-  }
-}
-
-class AuthStateHandler extends StatelessWidget {
-  const AuthStateHandler({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasData) {
-          return SplashScreen(nextScreen: HomeScreen());
-        } else {
-          return SplashScreen(nextScreen: OnboardingScreen());
-        }
-      },
     );
   }
 }

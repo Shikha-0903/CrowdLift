@@ -1,10 +1,9 @@
+import 'package:crowdlift/src/core/router/all/auth_routes.dart';
+import 'package:crowdlift/src/core/router/all/home_routes.dart';
 import 'package:crowdlift/src/feature/auth/presentation/pages/log_out.dart';
-import 'package:crowdlift/src/feature/auth/presentation/widgets/about_app.dart';
-import 'package:crowdlift/src/feature/transaction/presentation/pages/transaction_history.dart';
-import 'package:crowdlift/src/feature/transaction/presentation/pages/payment_received.dart';
-import 'package:crowdlift/src/feature/user_profile/presentation/pages/my_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
@@ -247,8 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: const Icon(Icons.person, color: Color(0xFF070527)),
               title: const Text("Profile"),
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyProfile())),
+              onTap: () => context.push(HomeRoutes.myProfile),
               hoverColor: Color(0xFFA998F7),
             ),
             ListTile(
@@ -256,8 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text("About us"),
               hoverColor: Color(0xFFA998F7),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AboutApp()));
+                context.push(AuthRoutes.aboutAppPage);
               },
             ),
             ListTile(
@@ -265,10 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text("Transaction History"),
               hoverColor: Color(0xFFA998F7),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TransactionHistoryPage()));
+                context.push(HomeRoutes.transactionHistoryPage);
               },
             ),
             ListTile(
@@ -276,10 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text("Payment Receipt"),
               hoverColor: Color(0xFFA998F7),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TransactionReceiptPage()));
+                context.push(HomeRoutes.transactionReceiptPage);
               },
             ),
             ListTile(
